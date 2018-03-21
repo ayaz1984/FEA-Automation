@@ -1,0 +1,22 @@
+# USE THIS SCRIPT ONLY IF YOU HAVE TO CREATE ONE LINEAR ELASTIC STEEL MATERIAL AND ONE SECTION ACROSS ALL THE PARTS
+# OPEN THE CAE SESSION, DOUBLE CLICK THE MODEL YOU WANT TO CREATE THE SECTIONS AND RUN THE SCRIPT
+
+from abaqus import *
+from datetime import datetime
+import material
+import section
+start_time=datetime.now()
+myModel_name=session.viewports[session.currentViewportName].displayedObject.modelName
+myModel=mdb.models[myModel_name]
+myModel.Material(name='Steel_Elastic')
+myModel.materials['Steel_Elastic'].Density(table=((0.000733, ), ))# density of steel in English units - change this for new material
+myModel.materials['Steel_Elastic'].Elastic(table=((29000000.0, 0.3), )) # Elastic properties of steel in English units - change this table for new material
+
+mySection = myModel.HomogeneousSolidSection(name='Steel_Elastic_section',
+    material='Steel_Elastic')
+for part in myModel.parts.values():
+	region=(part.cells,)
+	part.SectionAssignment(region=region,sectionName='Steel_Elastic_section')
+print("Sections created successfully for all the parts in the model")
+end_time=datetime.now()
+print('Duration:{}'.format(end_time-start_time))
