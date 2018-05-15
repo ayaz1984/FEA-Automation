@@ -1,0 +1,37 @@
+""""
+Created on Thurs Mar 22 2018
+@author: ShaikaAB
+"""
+
+from abaqus import *
+from odbAccess import *
+from abaqusConstants import *
+from textRepr import *
+from datetime import datetime
+start_time=datetime.now()
+import visualization
+import xyPlot
+import displayGroupOdbToolset as dgo
+myodb=session.viewports[session.currentViewportName].displayedObject #set odb to the odb opened in current view port
+showStopButtonInGui
+n=str(getInput("Enter the step which you want to linearize")) # Enter linearization step
+#print n
+linearize_step=myodb.steps[n]
+total_frames = range(len(linearize_step.frames)) # Get the number of frames in the step
+for i in total_frames:
+    reportnumber=i
+    myPaths = session.paths
+    numPaths = len(myPaths)
+    session.viewports['Viewport: 1'].odbDisplay.setFrame(step=n, frame=i)
+    for i in range(numPaths):
+        i += 1
+        solvePath = 'Path-'
+        solvePath += str(i)
+        path = session.paths[solvePath]
+        xyList = session.linearizeStress(name=solvePath, path=path, modelShape=DEFORMED, 
+                xyMembraneComps=('S11', 'S22', 'S33', 'S12', 'S13', 'S23',), xyBendingComps=('S11', 'S22', 
+                        'S33', 'S12', 'S13', 'S23',), curvatureCorrection=False, writeReport=True, 
+                reportFile='Linearization_'+str(n)+'_'+'Frame_'+str(reportnumber)+'.rpt',
+                )
+end_time=datetime.now() 
+print('Duration:{}'.format(end_time-start_time))
