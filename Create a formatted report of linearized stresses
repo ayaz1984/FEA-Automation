@@ -1,0 +1,160 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Thurs Jan 01, 2018
+
+@author: ShaikAB
+"""
+
+#Program to create an .csv file(test1.csv) and print the VonMises Membrane and Membrane+Bending stress out of a linearized stress report for reporting purposes   
+#import csv
+def percent_margin(num,limit):
+            Diff=float(limit)-float(num)
+            Margin=float(Diff)/float(limit)
+            #print(Diff)
+            pm=format(Margin*100)
+            return pm
+def main():
+  fields=(('Membrane:','0'),('Membrane+Bending:','0')) # Enter Membrane and Membrane + Bending allowables
+  n1=getInputs(fields=fields,label='Enter Membrane and Membrane + Bending allowables',dialogTitle='Stress Allowables',)
+  n1=[float(i) for i in n1]
+  print(n1)
+  f = open("test1.csv","w")
+        #writer=csv.writer(f,delimiter=',')
+  f.writelines("Location,Stress Type,VonMises,Allowable Stress,Design Margin \n")
+  with open("test_demo.rpt") as content:
+            line_content= content.readlines()
+            count =1
+            for i, line in enumerate(line_content):
+                if "Path" in line: 
+                    path="SCL"+ str(count)
+                    m=line_content[i+80]
+                    mb1=line_content[i+83]
+                    mb2=line_content[i+86]
+                    a=m[67:76]# 67 is the start and 76 is more than end; This will capture the VonMises only; DO NOT USE FOR TRESCA
+                    b=mb1[67:76]
+                    c=mb2[67:76]
+                    Percent_Margin_a=percent_margin(a,n1[0])
+                    Percent_Margin_b=percent_margin(b,n1[1])
+                    Percent_Margin_c=percent_margin(c,n1[1])                
+                    # print(Percent_Margin)
+                    f.writelines(path+",Membrane,"+a+","+str(n1[0])+","+Percent_Margin_a+"\n")
+                    f.writelines(path+",Membrane+Bending 1,"+b+","+str(n1[1])+","+Percent_Margin_b+"\n")
+                    f.writelines(path+",Membrane+Bending 2,"+c+","+str(n1[1])+","+Percent_Margin_c+"\n")
+                    count=count+1
+  print("Stress linearization report created successfully")
+  f.close()
+main()           
+
+
+-----------------------------------------------------------------------------------------------------------------
+
+Snapshot of a typical stress linearization file which serves as the input for the above code, copy the below lines to a text file
+and rename it to test_demo.rpt
+
+********************************************************************************
+Statically Equivalent Linear Stress Distribution across a Section,
+written on Tue Feb 13 22:52:31 2018
+
+Source
+-------
+
+   ODB: XXXXXXXXXXXXXXXXXXX.odb
+   Step: Case3
+   Frame: Increment     38: Step Time =    1.000
+
+
+Linearized Stresses for stress line 'Path-1'
+  Start point, Point 1 - (281.020477294922, -0.362137228250504, 10.3756904602051)
+  End point, Point 2   - (281.022277832031, -0.391326248645782, 10.9998207092285)
+  Number of intervals  - 40
+
+------------------------------------- COMPONENT RESULTS -------------------------------------
+
+                       S11         S22         S33         S12         S13         S23   
+
+        0           -0.212454     122.645     31254.9   -0.646861    0.715495      27.493  
+    0.0156204      -0.0794849      118.68     31253.4   -0.683882    0.616796     27.4584  
+    0.0312408       0.0534836     114.715     31251.8   -0.720904    0.518097     27.4238  
+    0.0468611        0.186452      110.75     31250.3   -0.757925    0.419399     27.3892  
+    0.0624815        0.319419     106.785     31248.8   -0.794946    0.320701     27.3546  
+    0.0781019        0.452386      102.82     31247.3   -0.831968    0.222004       27.32  
+    0.0937223        0.585353     98.8553     31245.8   -0.868989    0.123307     27.2854  
+     0.109343        0.718321     94.8903     31244.3   -0.906011   0.0246095     27.2508  
+     0.124963        0.851285     90.9254     31242.7   -0.943032  -0.0740852     27.2162  
+     0.140583         0.98425     86.9605     31241.2   -0.980053   -0.172781     27.1816  
+     0.156204         1.11723      82.995     31239.7    -1.01708   -0.271488      27.147  
+     0.171824         1.24818     75.1661     31236.7    -1.05168   -0.265578     27.0847  
+     0.187445         1.37914     67.3362     31233.7    -1.08629   -0.259667     27.0223  
+     0.203065          1.5101     59.5063     31230.7    -1.12089   -0.253756       26.96  
+     0.218685         1.64106     51.6765     31227.6     -1.1555   -0.247845     26.8977  
+     0.234306         1.77202     43.8466     31224.6     -1.1901   -0.241935     26.8353  
+     0.249926         1.90297     36.0167     31221.6    -1.22471   -0.236024      26.773  
+     0.265546         2.03393     28.1868     31218.6    -1.25931   -0.230114     26.7107  
+     0.281167         2.16489     20.3569     31215.6    -1.29392   -0.224204     26.6484  
+     0.296787         2.29585      12.527     31212.6    -1.32852   -0.218294      26.586  
+     0.312408          2.4268     4.69755     31209.6    -1.36313   -0.212384     26.5237  
+     0.328028         2.27938    -2.94649     31206.6    -1.31905   -0.156003     26.4625  
+     0.343648         2.13198    -10.5901     31203.6    -1.27497  -0.0996254     26.4014  
+     0.359269         1.98457    -18.2337     31200.6    -1.23089  -0.0432479     26.3402  
+     0.374889         1.83717    -25.8773     31197.6    -1.18682   0.0131294      26.279  
+     0.390509         1.68976    -33.5209     31194.6    -1.14274   0.0695065     26.2179  
+     0.40613          1.54236    -41.1645     31191.6    -1.09866    0.125883     26.1567  
+     0.42175          1.39495    -48.8081     31188.6    -1.05458    0.182257     26.0955  
+     0.437371         1.24757    -56.4516     31185.6    -1.01051    0.238608     26.0344  
+     0.452991         1.10015    -64.0953     31182.6   -0.966432    0.295013     25.9732  
+     0.468611        0.952774    -71.7376     31179.6   -0.922363    0.351379      25.912  
+     0.484232        0.807352    -75.5169     31178.1   -0.880696    0.303147     25.8786  
+     0.499852        0.661955    -79.2956     31176.7   -0.839037    0.254923     25.8452  
+     0.515472        0.516555    -83.0743     31175.2   -0.797377    0.206697     25.8117  
+     0.531093        0.371155     -86.853     31173.7   -0.755717     0.15847     25.7783  
+     0.546713        0.225753    -90.6317     31172.2   -0.714057    0.110241     25.7448  
+     0.562334       0.0804197    -94.4102     31170.7   -0.672397   0.0620137     25.7114  
+     0.577954      -0.0649998    -98.1889     31169.2   -0.630737    0.013787     25.6779  
+     0.593574       -0.210421    -101.968     31167.7   -0.589078  -0.0344432     25.6445  
+     0.609195       -0.355849    -105.746     31166.2   -0.547418  -0.0826784     25.6111  
+     0.624815       -0.501281    -109.525     31164.7   -0.505758   -0.130918     25.5776  
+
+     Membrane    
+(Average) Stress     1.03498     5.62859     31209.7   -0.969717   0.0399527     26.5295  
+
+     Bending     
+ Stress, Point 1     0.152098     130.723     50.7342   -0.079702   0.0314531     1.06285  
+
+  Membrane plus  
+Bending, Point 1     1.18708     136.352     31260.4    -1.04942   0.0714058     27.5924  
+
+     Bending     
+ Stress, Point 2    -0.152098    -130.723    -50.7342    0.079702  -0.0314531    -1.06285  
+
+  Membrane plus  
+Bending, Point 2    0.882885    -125.095     31158.9   -0.890015  0.00849954     25.4667  
+
+   Peak Stress,  
+     Point 1         -1.39953    -13.7071    -5.53889    0.402558    0.644089  -0.0993203  
+
+   Peak Stress,  
+     Point 2         -1.38417     15.5698     5.78498    0.384257   -0.139418    0.110959  
+
+------------------------------------- INVARIANT RESULTS -------------------------------------
+
+Bending components in equation for computing
+membrane plus bending stress invariants are:   S11, S22, S33, S12, S13, S23
+
+                      Max.        Mid.        Min.       Tresca       Mises  
+                      Prin.       Prin.       Prin.      Stress      Stress  
+     Membrane    
+(Average) Stress     31209.7     5.80326     0.83776     31208.9     31206.4
+
+  Membrane plus  
+Bending, Point 1     31260.4     136.336     1.17893     31259.3     31191.9
+
+  Membrane plus  
+Bending, Point 2       31159    0.889172    -125.122     31284.1     31221.3
+
+   Peak Stress,  
+     Point 1         -1.28981    -5.63369     -13.722     12.4322     10.9282
+
+   Peak Stress,  
+     Point 2          15.5797      5.7866    -1.39567     16.9754      14.759
+
+********************************************************************************
