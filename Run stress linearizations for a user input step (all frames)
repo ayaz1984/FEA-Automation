@@ -2,6 +2,7 @@
 Created on Thurs Mar 22 2018
 @author: ShaikaAB
 """
+# Before running this script, make sure to create the paths in Abaqus ODB file on your components where you want to find the linearized stresses
 
 from abaqus import *
 from odbAccess import *
