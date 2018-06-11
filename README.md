@@ -2,8 +2,8 @@
 -->Automating routine pre and post processing tasks in FEA using Abaqus.(time savings > 90%)
 -->Improved Diagnostic insights to the user for analysis convergence issues 
 
-1. Abaqus Convergence Graph - USE THIS CODE TO CREATE THE ABAQUS CONVERGENCE CRITERIA GRAPHS FOR ABAQUS STATIC/DYNAMIC IMPLICIT QUASI-STATIC ANALYSIS. THE BELOW CODE SCANS THE MESSAGE FILE(*.MSG) FROM THE ANALYSIS OUTPUT FILES AND PLOTS THE RESIDUAL FORCES COMPARED TO THE DEFAULT ABAQUS CONVEGENCE CRITERIA. THIS GIVES THE USER AN UNDERSTANDING OF WHERE THE ANALYSIS IS HAVING PROBLEMS FOR FOCUSED AND FASTER DEBUGGING. ALSO, THE GRAPHS GENERATED ALSO HIGHLIGHT THE NUMBER OF ISSUES ENCOUNTERED DURING ANALYSIS HELPING THE USER TO GUAGE 
-THE EFFICIENCY OF THE ANALYSIS.
+1. Abaqus Convergence Graph
+Use this code to creare the Abaqus convergence criteria graphs for Abaqus static/dynamic implicit analyses. The code scans the message file (msg file) from the analysis output files and plots the residual forces compared to the default Abaqus convergence criteria. This gives the user an understanding of where the analysis is having problems for focused and faster debugging. Also, the graphs generated also highlight the number of issues encountered during analysis helping the user to guage the efficieny of the analysis.
 
 
 
