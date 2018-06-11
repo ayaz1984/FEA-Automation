@@ -5,16 +5,22 @@ Created on Sun Jun 10 21:06:49 2018
 @author: ShaikAB
 """
 import matplotlib.pyplot as plt
-testFile=open("Copy and paste the analysis message(*.msg) file location here") 
+testFile=open("Copy and paste the analysis message(*.msg) file location here") # Enter the path of the abaqus analyis message file(*.msg)
 with testFile as content:
 	line_content = content.readlines()
 	count_step=0;count = 0;res=[];time_avg=[];step_count=0;line_break=[];
 count_number=[]
+
+# Retreiving the number of steps in the model by scanning the message file
+
 for i,line in enumerate(line_content):
     if ("S T E P       ") in line:
         count_step+=1
         line_break.append(i+1)
 print("Number of Steps in the model: ",len(line_break))
+
+# counting the number of occurences for "LARGEST RESIDUAL FORCE" in each step of the analysis
+
 for p in range(len(line_break)):
     #print(p,line_break[p])
     if(p==max(range(len(line_break)))):
@@ -33,6 +39,9 @@ for p in range(len(line_break)):
             else:
                 continue
         count_number.append(count)
+	
+# scanning the message file for LARGEST RESIDUAL FORCE AND TIME AVG. FORCE values and copying them to a list
+
 for i,line in enumerate(line_content):
     if ("LARGEST RESIDUAL FORCE") in line:
             line1=line
@@ -44,10 +53,19 @@ for i,line in enumerate(line_content):
             if split_line2[0] == "AVERAGE":
                 time_avg.append(split_line2[-1])
 force_diff=[]
+
+# Converting the above lists from type "string" to type "float"
+
 time_avg=list(map(float, time_avg))
 res=list(map(float,res))
+
+# Creating the Abaqus default time average force convergence criteria
+
 time_avg_criteria=[]
 time_avg_criteria=[0.005* i for i in time_avg]
+
+# Creating the graph with Residual force and time average criteria
+
 plt.figure(1)
 plt.title('Residual Force Convergence Plot - Abaqus')
 plt.plot(time_avg_criteria,'r',label='Time Average Force criterion limit')
@@ -61,13 +79,20 @@ for s in range(count_step-1):
     plt.text(count_number[s],0,'Step '+str(s+2),rotation=90)
 plt.legend()
 plt.show()
+
+# Printing the maximum and minimum residual forces to the user
+
 print("Maximum Residual Force: ", max(res))
 print("Minimum Residual Force: ", min(res))
 print("Maximum Time Average criteria: ", max(time_avg_criteria))
 print("Minimum Time Average criteria: ", min(time_avg_criteria))
+
+# Creating the graph with Absolute residual force left in the model
+
 for (m,n) in zip(time_avg_criteria,res):
     force_diff.append((abs(float(n))-abs(float(m))))
 plt.figure(2)
+plt.title('Absolute Residual Force Plot - Abaqus')
 plt.plot(force_diff, label='Unbalanced Residual Force (Abs)')
 plt.xlabel('Number of Time Increments')
 plt.ylabel('Unbalanced Residual Force')
