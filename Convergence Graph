@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sun Jun 10 21:06:49 2018
+
+@author: ShaikAB
+"""
+import matplotlib.pyplot as plt
+testFile=open("Copy and paste the analysis message(*.msg) file location here") 
+with testFile as content:
+	line_content = content.readlines()
+	count_step=0;count = 0;res=[];time_avg=[];step_count=0;line_break=[];
+count_number=[]
+for i,line in enumerate(line_content):
+    if ("S T E P       ") in line:
+        count_step+=1
+        line_break.append(i+1)
+print("Number of Steps in the model: ",len(line_break))
+for p in range(len(line_break)):
+    #print(p,line_break[p])
+    if(p==max(range(len(line_break)))):
+        line_content1=line_content[line_break[p]:]
+        for i,line in enumerate(line_content1):
+            if ("LARGEST RESIDUAL FORCE") in line:
+                count+=1
+            else:
+                continue
+        count_number.append(count)
+    else:
+        line_content2=line_content[line_break[p]:line_break[p+1]]
+        for i,line in enumerate(line_content2):
+            if ("LARGEST RESIDUAL FORCE") in line:
+                count+=1    
+            else:
+                continue
+        count_number.append(count)
+for i,line in enumerate(line_content):
+    if ("LARGEST RESIDUAL FORCE") in line:
+            line1=line
+            split_line1=line1.split()
+            res.append(split_line1[3])
+    if ("TIME AVG. FORCE") in line:
+            line2=line
+            split_line2=line2.split()
+            if split_line2[0] == "AVERAGE":
+                time_avg.append(split_line2[-1])
+force_diff=[]
+time_avg=list(map(float, time_avg))
+res=list(map(float,res))
+time_avg_criteria=[]
+time_avg_criteria=[0.005* i for i in time_avg]
+plt.figure(1)
+plt.title('Residual Force Convergence Plot - Abaqus')
+plt.plot(time_avg_criteria,'r',label='Time Average Force criterion limit')
+plt.xlabel('Number of Time Increments')
+plt.ylabel('Force')
+plt.plot(res,'b', label='Residual Force')
+plt.axvline(x=0, color='g',linestyle='--', label='Analysis Step')
+plt.text(0,0,'Step 1', rotation=90)
+for s in range(count_step-1):
+    plt.axvline(x=count_number[s],color='g',linestyle='--')
+    plt.text(count_number[s],0,'Step '+str(s+2),rotation=90)
+plt.legend()
+plt.show()
+print("Maximum Residual Force: ", max(res))
+print("Minimum Residual Force: ", min(res))
+print("Maximum Time Average criteria: ", max(time_avg_criteria))
+print("Minimum Time Average criteria: ", min(time_avg_criteria))
+for (m,n) in zip(time_avg_criteria,res):
+    force_diff.append((abs(float(n))-abs(float(m))))
+plt.figure(2)
+plt.plot(force_diff, label='Unbalanced Residual Force (Abs)')
+plt.xlabel('Number of Time Increments')
+plt.ylabel('Unbalanced Residual Force')
+plt.legend()
+plt.show()
+testFile.close()
