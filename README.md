@@ -1,6 +1,6 @@
 # FEA-Automation
 The goal of this repository is to:
--->Automating routine pre and post processing tasks in FEA using Abaqus.(time savings > 90%)
+-->Automating routine pre and post processing tasks in FEA using Python.(time savings > 90%)
 -->Improved Diagnostic insights to the user for analysis convergence issues 
 
 1. Abaqus Convergence Graph -
