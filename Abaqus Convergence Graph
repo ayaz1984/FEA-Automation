@@ -11,7 +11,7 @@ ALSO, THE GRAPHS GENERATED ALSO HIGHLIGHT THE NUMBER OF ISSUES ENCOUNTERED DURIN
 THE EFFICIENCY OF THE ANALYSIS.
 """
 import matplotlib.pyplot as plt
-testFile=open("Copy and paste the analysis message(*.msg) file location here") # Enter the path of the abaqus analyis message file(*.msg)
+testFile=open("Copy and paste the analysis message(*.msg) file location here") # Enter the path of the abaqus analysis message file(*.msg)
 with testFile as content:
 	line_content = content.readlines()
 	count_step=0;count = 0;res=[];time_avg=[];step_count=0;line_break=[];
